@@ -1,0 +1,20 @@
+{
+    "name": "crs/application",
+    "version": "1.0.0",
+    "description": "crs",
+    "authors": [
+        {
+            "name": "YGugnin"
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "php-di/php-di": "^7.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}

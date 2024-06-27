@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  php:
+    container_name: crs_php
+    build: ./images/php
+    volumes:
+      - ../:/application:rw
+    restart: always
+    privileged: true
