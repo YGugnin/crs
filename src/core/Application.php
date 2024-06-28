@@ -8,7 +8,6 @@ use App\exceptions\ApplicationException;
 use App\exceptions\DtoException;
 use App\interfaces\LoggerInterface;
 use DI\Container;
-use DI\ContainerBuilder;
 use Exception;
 use DI\DependencyException;
 use DI\NotFoundException;
@@ -45,10 +44,8 @@ final class Application {
         if (!in_array($this->sapi, $appConfig['supported_sapis'])) {
             throw new ApplicationException('Unsupported sapi ' . $this->sapi . '.');
         }
-        $containerBuilder = new ContainerBuilder;
-        $containerBuilder->addDefinitions($appConfig);
-
-        $this->container = $containerBuilder->build();
+        
+        $this->container = ProjectContainerBuilder::build();
         
         $this->initialised = true;
         return self::getInstance();
