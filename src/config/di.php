@@ -44,5 +44,7 @@ return [
         DI\get('fixed_currency_list'),
         DI\get('eu_rate_percent'),
         DI\get('outside_eu_rate_percent'),
+        DI\get('money_locale'),
+        DI\get('currency_code'),
     ),
 ];

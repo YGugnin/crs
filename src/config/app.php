@@ -23,6 +23,9 @@ return array_merge([
     'eu_rate_percent' => 0.01,
     'outside_eu_rate_percent' => 0.02,
     
-    'logPath' => implode(DIRECTORY_SEPARATOR, [dirname(__DIR__, 2) , 'log', date('Y-m-d') . '.log'])
+    'logPath' => implode(DIRECTORY_SEPARATOR, [dirname(__DIR__, 2) , 'log', date('Y-m-d') . '.log']),
     
-], require_once __DIR__ . DIRECTORY_SEPARATOR . 'di.php');
+    'money_locale' => 'lt_LT',
+    'currency_code' => 'EUR'
+    
+], require __DIR__ . DIRECTORY_SEPARATOR . 'di.php');
