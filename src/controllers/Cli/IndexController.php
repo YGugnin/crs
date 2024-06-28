@@ -13,6 +13,7 @@ use App\models\InputRecordModel;
 use App\services\Api\BinListApi;
 use App\services\Api\ExchangeApi;
 use App\services\EUIdentifier\EUIdentifier;
+use NumberFormatter;
 
 class IndexController extends CliController
 {
@@ -20,6 +21,8 @@ class IndexController extends CliController
         private readonly array $fixedCurrency,
         private readonly float $euRatePercent,
         private readonly float $outsideEuRatePercent,
+        private readonly string $moneyLocale,
+        private readonly string $currencyCode,
         private readonly FileStorageInterface $fileStorage,
         private readonly JsonParserInterface $jsonParser,
         private readonly BinListApi $binListApi,
@@ -48,16 +51,25 @@ class IndexController extends CliController
         $data = $recordModel->toArray($this->jsonParser->parseArray($this->fileStorage->getArrayContent($filepath)));
         $result = [];
         
+        $formatter = new NumberFormatter($this->moneyLocale, $pretty ? NumberFormatter::CURRENCY : NumberFormatter::DECIMAL);
+        if ($pretty){
+            $formatter->setTextAttribute(NumberFormatter::CURRENCY_CODE, $this->currencyCode);
+        }
+        $formatter->setAttribute(NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_CEILING);
+        
         foreach ($data as $record) {
             $binModel = new BinModel($this->jsonParser->parse($this->binListApi->getBin($record->getBin())));
             $rate = array_key_exists($record->getCurrency(), $rates->getRates()) ? $rates->getRates()[$record->getCurrency()] : 0;
             $amountFixed = (array_key_exists($record->getCurrency(), $this->fixedCurrency) || !$rate ? $record->getAmount() : $record->getAmount() / $rate)
-                * ($this->identifier->isEU($binModel->getCountry()->getAlpha2()) ? $this->euRatePercent : $this->outsideEuRatePercent);
-            $result[] = (bool)$pretty ? $this->colorized((string)$record->getAmount(), 32) . ' ' .
-                                        $this->colorized($record->getCurrency(), 31) . ' ' .
-                                        $this->colorized('(in country ' . $binModel->getCountry()->getName() . ') ', 34) . ' = ' .
-                                        $amountFixed
-                                      : $amountFixed;
+                * ($this->identifier->isEU($binModel->getAlpha2()) ? $this->euRatePercent : $this->outsideEuRatePercent);
+            
+            $amountFixed = $formatter->format($amountFixed);
+            
+            $result[] = $pretty ? $this->colorized((string)$record->getAmount(), 32) . ' ' .
+                                  $this->colorized($record->getCurrency(), 31) . ' ' .
+                                  $this->colorized('(in country ' . $binModel->getCountry()->getName() . ')', 34) . ' = ' .
+                                  $amountFixed
+                                : $amountFixed;
         }
         
         $this->stdout(implode(PHP_EOL, $result));
