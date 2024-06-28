@@ -24,9 +24,10 @@ class Extended implements RequestInterface {
             $content = curl_exec ($curl);
             $error   = curl_errno($curl);
             $message = curl_error($curl);
+            $code    = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
             
-            if ($error) {
+            if ($error || $code !== 200) {
                 throw new RequestException('Request failed: ' . $message);
             }
             return  $content;
