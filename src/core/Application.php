@@ -84,7 +84,7 @@ final class Application {
                     $class = $this->container->get($controller->controller);
                     $class->{$controller->function}(...$controller->arguments);
                 } catch (Throwable $exception) {
-                    $this->container->get(LoggerInterface::class)->add('Exception', $exception);
+                    $this->container->get(LoggerInterface::class)->error('Exception', $exception);
                 }
                 break;
             default:

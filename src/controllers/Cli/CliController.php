@@ -7,7 +7,7 @@ namespace App\controllers\Cli;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionException;
-class CliController
+readonly class CliController
 {
     /**
      * @param string $class

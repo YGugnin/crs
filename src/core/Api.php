@@ -7,14 +7,14 @@ namespace App\core;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\RequestInterface;
 
-class Api {
+readonly class Api {
     public function __construct(
-        private readonly bool $cacheEnabled,
-        private readonly int $cacheTtl,
-        private readonly string $cachePath,
-        private readonly string $cachePrefix,
-        private readonly RequestInterface $request,
-        private readonly FileStorageInterface $storage
+        private bool $cacheEnabled,
+        private int $cacheTtl,
+        private string $cachePath,
+        private string $cachePrefix,
+        private RequestInterface $request,
+        private FileStorageInterface $storage
     ) {
     
     }
