@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\models;
 
 use App\core\Model;
+use App\interfaces\BinModelInterface;
+
 /**
  * @method BinNumberModel getNumber()
  * @method BinNumberModel setNumber()
@@ -21,7 +23,7 @@ use App\core\Model;
  * @method BinBankModel getBank()
  * @method BinBankModel setBank()
  */
-class BinModel extends Model {
+class BinModel extends Model implements BinModelInterface {
     protected ?BinNumberModel $number;
     protected ?string $scheme;
     protected ?string $type;
@@ -29,5 +31,20 @@ class BinModel extends Model {
     protected ?bool $prepaid;
     protected ?BinCountryModel $country;
     protected ?BinBankModel $bank;
+    
+    /**
+     * @return string
+     */
+    public function getAlpha2(): string {
+        return $this->getCountry()->getAlpha2();
+    }
+    
+    /**
+     * @return string
+     */
+    public function getCountryName(): string
+    {
+        return $this->getCountry()->getName();
+    }
     
 }
