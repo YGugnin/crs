@@ -7,5 +7,6 @@ namespace App\interfaces;
 use Throwable;
 
 interface LoggerInterface {
-    public function add(string $level, Throwable $exception): void;
+    public function error(string $level, Throwable $exception): void;
+    public function log(string $level, string $message): void;
 }

@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace App\services\Request;
 
 use App\exceptions\RequestException;
+use App\interfaces\LoggerInterface;
 use App\interfaces\RequestInterface;
 use Throwable;
 
-class Extended implements RequestInterface {
+readonly class Extended implements RequestInterface {
+    public function __construct(
+        private LoggerInterface $logger
+    )
+    {
+    
+    }
     /**
      * @param string $endpoint
      * @return string|null
@@ -30,6 +37,7 @@ class Extended implements RequestInterface {
             if ($error || $code !== 200) {
                 throw new RequestException('Request failed: ' . $message);
             }
+            $this->logger->log('Request', 'Sent to ' . $endpoint);
             return  $content;
         } catch (Throwable $exception) {
             throw new RequestException($exception->getMessage());

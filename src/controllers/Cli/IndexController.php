@@ -7,6 +7,7 @@ use App\exceptions\ControllerException;
 use App\exceptions\ModelException;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\JsonParserInterface;
+use App\interfaces\LoggerInterface;
 use App\models\BinModel;
 use App\models\ExchangeModel;
 use App\models\InputRecordModel;
@@ -15,19 +16,20 @@ use App\services\Api\ExchangeApi;
 use App\services\EUIdentifier\EUIdentifier;
 use NumberFormatter;
 
-class IndexController extends CliController
+readonly class IndexController extends CliController
 {
     public function __construct(
-        private readonly array $fixedCurrency,
-        private readonly float $euRatePercent,
-        private readonly float $outsideEuRatePercent,
-        private readonly string $moneyLocale,
-        private readonly string $currencyCode,
-        private readonly FileStorageInterface $fileStorage,
-        private readonly JsonParserInterface $jsonParser,
-        private readonly BinListApi $binListApi,
-        private readonly ExchangeApi $exchangeApi,
-        private readonly EUIdentifier $identifier
+        private array $fixedCurrency,
+        private float $euRatePercent,
+        private float $outsideEuRatePercent,
+        private string $moneyLocale,
+        private string $currencyCode,
+        private LoggerInterface $logger,
+        private FileStorageInterface $fileStorage,
+        private JsonParserInterface $jsonParser,
+        private BinListApi $binListApi,
+        private ExchangeApi $exchangeApi,
+        private EUIdentifier $identifier
     )
     {
 
@@ -67,11 +69,11 @@ class IndexController extends CliController
             
             $result[] = $pretty ? $this->colorized((string)$record->getAmount(), 32) . ' ' .
                                   $this->colorized($record->getCurrency(), 31) . ' ' .
-                                  $this->colorized('(in country ' . $binModel->getCountry()->getName() . ')', 34) . ' = ' .
+                                  $this->colorized('(in country ' . $binModel->getCountryName() . ')', 34) . ' = ' .
                                   $amountFixed
                                 : $amountFixed;
         }
-        
+        $this->logger->log('Success', 'Commissions calculated');
         $this->stdout(implode(PHP_EOL, $result));
     }
     

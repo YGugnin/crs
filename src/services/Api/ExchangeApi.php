@@ -8,17 +8,17 @@ use App\core\Api;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\RequestInterface;
 
-class ExchangeApi extends Api {
+readonly class ExchangeApi extends Api {
     protected const string CACHE_PREFIX = 'ex_';
     
     public function __construct(
-        private readonly string $endpoint,
-        private readonly bool $cacheEnabled,
-        private readonly int $cacheTtl,
-        private readonly string $key,
-        private readonly string $cachePath,
-        private readonly RequestInterface $request,
-        private readonly FileStorageInterface $storage
+        private string $endpoint,
+        private bool $cacheEnabled,
+        private int $cacheTtl,
+        private string $key,
+        private string $cachePath,
+        private RequestInterface $request,
+        private FileStorageInterface $storage
     )
     {
         parent::__construct(

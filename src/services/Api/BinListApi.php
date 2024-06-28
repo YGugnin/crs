@@ -8,16 +8,16 @@ use App\core\Api;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\RequestInterface;
 
-class BinListApi extends Api {
+readonly class BinListApi extends Api {
     protected const string CACHE_PREFIX = 'bl_';
     
     public function __construct(
-        private readonly string $apiEndpoint,
-        private readonly bool $apiCacheEnabled,
-        private readonly int $apiCacheTtl,
-        private readonly string $apiCachePath,
-        private readonly RequestInterface $request,
-        private readonly FileStorageInterface $storage
+        private string $apiEndpoint,
+        private bool $apiCacheEnabled,
+        private int $apiCacheTtl,
+        private string $apiCachePath,
+        private RequestInterface $request,
+        private FileStorageInterface $storage
     )
     {
         parent::__construct(
