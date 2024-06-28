@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\controllers\Cli;
 
 use App\exceptions\ControllerException;
+use App\exceptions\JsonParserException;
 use App\exceptions\ModelException;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\JsonParserInterface;
@@ -51,15 +52,27 @@ readonly class IndexController extends CliController
             $this->output->print($this->getUsageContent(self::class));
             return;
         }
+        
+        $recordModel = new InputRecordModel();
+        
+        try {
+            $data = $recordModel->toArray($this->jsonParser->parseArray($this->fileStorage->getArrayContent($filepath)));
+        } catch (JsonParserException) {
+            throw new ControllerException('File is broken.');
+        }
+        
+        if (!$data) {
+            throw new ControllerException('File empty.');
+        }
+        
+        $result = [];
+        
+        
         $rates = new ExchangeModel($this->jsonParser->parse($this->exchangeApi->getRates()));
         if (!$rates->getSuccess()) {
             $this->exchangeApi->removeCache();
             throw new ControllerException('Incorrect exchange rates');
         }
-        
-        $recordModel = new InputRecordModel();
-        $data = $recordModel->toArray($this->jsonParser->parseArray($this->fileStorage->getArrayContent($filepath)));
-        $result = [];
         
         $formatter = new NumberFormatter($pretty ? $this->moneyLocale : $this->defaultMoneyLocale, $pretty ? NumberFormatter::CURRENCY : NumberFormatter::DECIMAL);
         
