@@ -26,6 +26,9 @@ return array_merge([
     'logPath' => implode(DIRECTORY_SEPARATOR, [dirname(__DIR__, 2) , 'log', date('Y-m-d') . '.log']),
     
     'money_locale' => 'lt_LT',
-    'currency_code' => 'EUR'
+    'default_money_locale' => 'en',
+    'currency_code' => 'EUR',
+    
+    'display_errors_in_console' => true,
     
 ], require __DIR__ . DIRECTORY_SEPARATOR . 'di.php');

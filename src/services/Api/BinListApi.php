@@ -33,4 +33,11 @@ readonly class BinListApi extends Api {
         // You have exceeded the rate limit of 5 requests/hour. Please wait a bit and try again.
         return $this->get(trim($this->apiEndpoint, '/') . '/' . $bin);
     }
+    
+    /**
+     * @return void
+     */
+    public function removeCache(int $bin): void {
+        $this->storage->delete($this->getFileName(trim($this->apiEndpoint, '/') . '/' . $bin));
+    }
 }

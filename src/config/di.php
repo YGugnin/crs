@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\interfaces\FileStorageInterface;
 use App\interfaces\JsonParserInterface;
+use App\interfaces\OutputInterface;
 use App\interfaces\RequestInterface;
 use App\interfaces\LoggerInterface;
 use App\services\Api\BinListApi;
@@ -12,16 +13,19 @@ use App\services\FileStorage\Simple as FileReaderSimple;
 use App\services\JsonParser\Simple as JsonParserSimple;
 //use App\services\Request\Simple as RequestSimple;
 use App\services\Request\Extended as RequestExtended;
+use App\services\Output\Simple as OutputSimple;
 use App\services\Logger\Simple as LoggerSimple;
 use App\controllers\Cli\IndexController;
 use App\services\EUIdentifier\EUIdentifier;
 
 return [
     FileStorageInterface::class => DI\autowire(FileReaderSimple::class),
+    OutputInterface::class => DI\autowire(OutputSimple::class),
     JsonParserInterface::class => DI\autowire(JsonParserSimple::class),
     //RequestInterface::class => DI\autowire(RequestSimple::class),
     RequestInterface::class => DI\autowire(RequestExtended::class),
     LoggerInterface::class => DI\autowire(LoggerSimple::class)->constructor(
+        DI\get('display_errors_in_console'),
         DI\get('logPath'),
     ),
     BinListApi::class => DI\autowire(BinListApi::class)->constructor(
@@ -45,6 +49,12 @@ return [
         DI\get('eu_rate_percent'),
         DI\get('outside_eu_rate_percent'),
         DI\get('money_locale'),
+        DI\get('default_money_locale'),
         DI\get('currency_code'),
+    ),
+    //just for unit testing
+    LoggerSimple::class => DI\autowire(LoggerSimple::class)->constructor(
+        DI\get('display_errors_in_console'),
+        DI\get('logPath'),
     ),
 ];

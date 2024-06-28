@@ -9,9 +9,10 @@ use App\interfaces\LoggerInterface;
 use App\interfaces\RequestInterface;
 use Throwable;
 
-readonly class Simple implements RequestInterface {
+//not readonly for mocking
+class Simple implements RequestInterface {
     public function __construct(
-        private LoggerInterface $logger
+        private readonly LoggerInterface $logger
     )
     {
     

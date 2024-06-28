@@ -43,7 +43,7 @@ readonly class Api {
      * @param string $url
      * @return string
      */
-    protected function getFileName(string $url): string {
+    public function getFileName(string $url): string {
         return $this->cachePath . DIRECTORY_SEPARATOR . $this->cachePrefix . md5($url) . '.cache';
     }
 }
