@@ -4,11 +4,14 @@ ARG arch
 
 RUN apt-get update
 RUN apt-get install -y aptitude\
+    libicu-dev \
     wget \
     git
 
 # composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN docker-php-ext-configure intl && docker-php-ext-install intl
 
 ADD conf/www.conf /usr/local/etc/php-fpm.d/www.conf
 ADD conf/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini
