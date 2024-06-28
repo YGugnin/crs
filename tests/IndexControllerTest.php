@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\controllers\Cli\IndexController;
+use App\exceptions\ControllerException;
 use App\exceptions\FileStorageException;
+use App\exceptions\ModelException;
 use App\interfaces\FileStorageInterface;
 use App\interfaces\JsonParserInterface;
 use App\interfaces\LoggerInterface;
@@ -52,8 +54,14 @@ final class IndexControllerTest extends TestCase {
      * @throws DependencyException
      * @throws NotFoundException
      */
-    public function testCanHelp(): void {
-        $controller = new IndexController(
+    
+    /**
+     * @return IndexController
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    private function getController(): IndexController {
+        return new IndexController(
             ProjectContainerBuilder::get('fixed_currency_list'),
             ProjectContainerBuilder::get('eu_rate_percent'),
             ProjectContainerBuilder::get('outside_eu_rate_percent'),
@@ -68,7 +76,6 @@ final class IndexControllerTest extends TestCase {
             ProjectContainerBuilder::get(EUIdentifier::class),
             $this->getMockOutput()
         );
-        $this->assertNull($controller->helpAction());
     }
     
     /**
@@ -76,50 +83,38 @@ final class IndexControllerTest extends TestCase {
      * @throws DependencyException
      * @throws NotFoundException
      */
-    public function testCanCalculate(): void {
-        $fileName = $this->virtualDirectory->url() . DIRECTORY_SEPARATOR . 'text.txt';
-        ProjectContainerBuilder::get(FileStorageInterface::class)->save($fileName, $this->getFileContent());
-        
-        $controller = $api = new IndexController(
-            ProjectContainerBuilder::get('fixed_currency_list'),
-            ProjectContainerBuilder::get('eu_rate_percent'),
-            ProjectContainerBuilder::get('outside_eu_rate_percent'),
-            ProjectContainerBuilder::get('money_locale'),
-            ProjectContainerBuilder::get('currency_code'),
-            $this->getMockLogger(),
-            ProjectContainerBuilder::get(FileStorageInterface::class),
-            ProjectContainerBuilder::get(JsonParserInterface::class),
-            ProjectContainerBuilder::get(BinListApi::class),
-            ProjectContainerBuilder::get(ExchangeApi::class),
-            ProjectContainerBuilder::get(EUIdentifier::class),
-            $this->getMockOutput()
-        );
-        $this->assertNull($controller->indexAction($fileName));
+    public function testCanHelp(): void {
+        $this->assertNull($this->getController()->helpAction());
     }
+    
     /**
      * @return void
      * @throws DependencyException
      * @throws NotFoundException
+     * @throws Throwable
+     * @throws ControllerException
+     * @throws ModelException
+     */
+    public function testCanCalculate(): void {
+        $fileName = $this->virtualDirectory->url() . DIRECTORY_SEPARATOR . 'text.txt';
+        ProjectContainerBuilder::get(FileStorageInterface::class)->save($fileName, $this->getFileContent());
+       
+        $this->assertNull($this->getController()->indexAction($fileName));
+    }
+    
+    /**
+     * @return void
+     * @throws ControllerException
+     * @throws DependencyException
+     * @throws ModelException
+     * @throws NotFoundException
+     * @throws Throwable
      */
     public function testThrowOnFileNOtExists(): void {
         $this->expectException(FileStorageException::class);
         
         $fileName = $this->virtualDirectory->url() . DIRECTORY_SEPARATOR . 'not_exists.txt';
         
-        $controller = new IndexController(
-            ProjectContainerBuilder::get('fixed_currency_list'),
-            ProjectContainerBuilder::get('eu_rate_percent'),
-            ProjectContainerBuilder::get('outside_eu_rate_percent'),
-            ProjectContainerBuilder::get('money_locale'),
-            ProjectContainerBuilder::get('currency_code'),
-            $this->getMockLogger(),
-            ProjectContainerBuilder::get(FileStorageInterface::class),
-            ProjectContainerBuilder::get(JsonParserInterface::class),
-            ProjectContainerBuilder::get(BinListApi::class),
-            ProjectContainerBuilder::get(ExchangeApi::class),
-            ProjectContainerBuilder::get(EUIdentifier::class),
-            $this->getMockOutput()
-        );
-        $this->assertNull($controller->indexAction($fileName));
+        $this->assertNull($this->getController()->indexAction($fileName));
     }
 }
