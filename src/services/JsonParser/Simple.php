@@ -12,10 +12,10 @@ use Throwable;
 class Simple implements JsonParserInterface {
     /**
      * @param string $json
-     * @return stdClass|null
+     * @return array
      * @throws JsonParserException
      */
-    public function parse(string $json): ?array {
+    public function parse(string $json): array {
         try {
             return json_decode($json, true);
         } catch (Throwable $exception) {

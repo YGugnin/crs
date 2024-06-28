@@ -6,12 +6,16 @@ namespace App\services\Logger;
 
 use App\interfaces\FileStorageInterface;
 use App\interfaces\LoggerInterface;
+use App\interfaces\OutputInterface;
 use Throwable;
 
-readonly class Simple implements LoggerInterface {
+//Not readonly for mocking
+class Simple implements LoggerInterface {
     public function __construct(
-        private string $logPath,
-        private FileStorageInterface $storage
+        private readonly bool $displayErrors,
+        private readonly string $logPath,
+        private readonly FileStorageInterface $storage,
+        private readonly OutputInterface $output,
     ){
     
     }
@@ -26,8 +30,10 @@ readonly class Simple implements LoggerInterface {
         
         $this->saveToFile(date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL);
         
-        $this->print($message, 31);
-        $this->print($exception->getTraceAsString(), 32);
+        if ($this->displayErrors) {
+            $this->print($message, 31);
+            $this->print($exception->getTraceAsString(), 32);
+        }
     }
     
     /**
@@ -53,9 +59,6 @@ readonly class Simple implements LoggerInterface {
      * @return void
      */
     private function print(string $message, int $color): void {
-        echo "\e[{$color}m{$message}\e[0m" . PHP_EOL;
-        if (ob_get_level()) {
-            ob_flush();
-        }
+        $this->output->print($this->output->colorize($message, $color));
     }
 }

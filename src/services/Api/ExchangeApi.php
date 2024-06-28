@@ -42,7 +42,7 @@ readonly class ExchangeApi extends Api {
     /**
      * @return void
      */
-    public function removeCache(): void{
+    public function removeCache(): void {
         $this->storage->delete($this->getFileName(trim($this->endpoint, '/') . '?access_key=' . $this->key));
     }
 }
