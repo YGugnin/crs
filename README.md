@@ -7,11 +7,12 @@ After investigation the task, it was decided to use a mini framework because:
 ---
 # about framework
 - Using cache requests because of https://binlist.net/ allow only 5 requests per hour
-- Using DI container because 
+- Using DI container because
 - > Code should be extendible – we should not need to change existing, already tested functionality
 - Using ext-intl because php strongly recommend use it for formating money format
 - Using vfsstream for create mocks
 - Using curl for example of framework extensibility
+- This is not external framework. All core units created onfly
 ---
 
 # install
@@ -68,4 +69,6 @@ Additional libs described in "about framework" section
 > Do not use....
 
 OK ;)
+
+P.S. It took about 1.5 working days. Not 2-4 hours. But it looks like it more code than need
 
